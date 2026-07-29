@@ -1,6 +1,7 @@
 name: test
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -55,3 +56,10 @@ jobs:
       - name: Install and test changed formulae
         if: github.event_name == 'pull_request'
         run: brew test-bot --only-formulae
+
+      - name: Install and test the published formula
+        if: github.event_name != 'pull_request'
+        run: |
+          brew install airouter-dev/tap/oai-smoke
+          brew test airouter-dev/tap/oai-smoke
+          test "$(oai-smoke --version)" = "oai-smoke 0.1.2"
